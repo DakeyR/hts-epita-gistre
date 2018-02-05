@@ -1,5 +1,5 @@
 #include "aux.h"
-#include "printf.h"
+#include "lookup.h"
 
 typedef int (*fun)();
 
