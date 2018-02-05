@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "aux.h"
 #include "lookup.h"
 
@@ -88,7 +86,6 @@ void *find_sym(const char *name, struct link_map *lm)
       ght->buckets = (ElfW(Word) *)ght->bloom + ght->bloom_size * 2;
       ght->chain = (ElfW(Word) *)ght->buckets + ght->nbuckets;
 
-      printf("GNU HASH present\n");
       ElfW(Word) hash = gnu_hash((const unsigned char *)name);
       if (!is_absent(ght, hash))
       {
@@ -99,10 +96,7 @@ void *find_sym(const char *name, struct link_map *lm)
           const ElfW(Word) nhash = ght->chain[idx - ght->symoffset];
 
           if ((hash|1)== (nhash|1) && !my_strcmp(name, n))
-          {
-            printf("Found !\n");
             return (void *)lm->l_addr + s->st_value;
-          }
 
           if (nhash & 1)
             break;
