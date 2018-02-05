@@ -28,3 +28,19 @@ void *get_dyn(ElfW(Phdr) *phdr)
   }
   return (void *)0;
 }
+
+void *get_rdebug(ElfW(Dyn) *dyn)
+{
+  while (dyn && dyn->d_tag != DT_NULL)
+  {
+    if (dyn->d_tag == DT_DEBUG)
+      return (void *)dyn->d_un.d_ptr;
+    dyn++;
+  }
+  return (void *)0;
+}
+
+void *get_link_map(struct r_debug *dbg)
+{
+  return dbg ? dbg->r_map : (void *)0;
+}
