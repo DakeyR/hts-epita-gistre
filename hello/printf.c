@@ -4,7 +4,7 @@ void *get_auxv(char *envp[])
 {
   while (envp && *envp)
     envp++;
-  return !*envp ? envp++: envp;
+  return !(*envp) ? envp + 1 : envp;
 }
 
 void *get_phdr(ElfW(auxv_t) *auxv)
@@ -20,10 +20,13 @@ void *get_phdr(ElfW(auxv_t) *auxv)
 
 void *get_dyn(ElfW(Phdr) *phdr)
 {
+  ElfW(Addr) base = 0;
   while (phdr && phdr->p_type != PT_NULL)
   {
+    if (phdr->p_type == PT_PHDR)
+      base = (ElfW(Addr))phdr - phdr->p_vaddr;
     if (phdr->p_type == PT_DYNAMIC)
-      return (void *)phdr->p_vaddr;
+      return (void *)(phdr->p_vaddr + base);
     phdr++;
   }
   return (void *)0;
