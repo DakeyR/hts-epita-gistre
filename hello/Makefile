@@ -3,7 +3,7 @@ CFLAGS=-Wall -Wextra -Werror -std=c99 -g
 
 all: hello
 
-hello:printf.o hello.o aux.o
+hello:printf.o hello.o aux.o gnu_hash.o
 	${LINK.c} -o $@ $^ $(CFLAGS)
 
 clean:
