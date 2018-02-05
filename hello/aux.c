@@ -19,11 +19,11 @@ int my_strcmp(const char *str1, const char *str2)
   return 1;
 }
 
-int is_absent(struct gnu_hash_table *ght, ElfW(Word) hash)
+int is_absent(struct gnu_hash_table *ght, ElfW(Xword) *bloom, ElfW(Word) hash)
 {
   if (!ght)
     return 0;
-  ElfW(Xword) word = ght->bloom[(hash / __ELF_NATIVE_CLASS) % ght->bloom_size];
+  ElfW(Xword) word = bloom[(hash / __ELF_NATIVE_CLASS) % ght->bloom_size];
   ElfW(Xword) mask = 0 
           | (ElfW(Xword))1 << (hash % __ELF_NATIVE_CLASS) 
           | (ElfW(Xword))1 << (hash >> ght->bloom_shift) % __ELF_NATIVE_CLASS;
