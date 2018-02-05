@@ -1,7 +1,7 @@
 #include "aux.h"
 #include "printf.h"
 
-typedef int (*func)(const char *);
+typedef int (*fun)();
 
 int main(int argc, char *argv[], char *envp[])
 {
@@ -33,7 +33,7 @@ int main(int argc, char *argv[], char *envp[])
   if (!f)
     return 6;
 
-  ((func) f)("Bonjour\n");
+  ((fun) f)("Bonjour\n");
 
   return 0;
 }
