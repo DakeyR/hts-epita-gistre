@@ -1,3 +1,4 @@
+#include "aux.h"
 #include "printf.h"
 
 void *get_auxv(char *envp[])
@@ -46,4 +47,48 @@ void *get_rdebug(ElfW(Dyn) *dyn)
 void *get_link_map(struct r_debug *dbg)
 {
   return dbg ? dbg->r_map : (void *)0;
+}
+
+void *find_sym(const char *name, struct link_map *lm)
+{
+
+  while (lm)
+  {
+    ElfW(Dyn) *dyn = lm->l_ld;
+    //struct gnu_hash_tabe *ght = (void *)0;
+    ElfW(Sym) *sym = (void *)0;
+    char *strtab = (void *)0;
+
+    while (dyn && dyn->d_tag != DT_NULL)
+    {
+      //if (dyn->d_tag == DT_GNU_HASH)
+      //  ght = (void *)dyn->d_un.d_ptr;
+      ElfW(Addr) ptr = 0;
+      if (dyn->d_un.d_ptr < lm->l_addr)
+        ptr = lm->l_addr + dyn->d_un.d_ptr;
+      else
+        ptr = dyn->d_un.d_ptr;
+
+      if (dyn->d_tag == DT_SYMTAB)
+        sym = (void *) ptr;
+      else if (dyn->d_tag == DT_STRTAB)
+        strtab = (void *) ptr;
+      if (sym && strtab)
+        break;
+      dyn++;
+    }
+
+    ElfW(Sym) *s = sym + 1;
+    while ((char *)s < strtab)
+    {
+      if (!my_strcmp(name, strtab + s->st_name))
+        return (void *)lm->l_addr + s->st_value;
+      s++;
+    }
+
+    //if (!is_absent(ght, name))
+
+    lm = lm->l_next;
+  }
+  return (void *)0;
 }

@@ -1,4 +1,7 @@
+#include "aux.h"
 #include "printf.h"
+
+typedef int (*func)(const char *);
 
 int main(int argc, char *argv[], char *envp[])
 {
@@ -25,7 +28,12 @@ int main(int argc, char *argv[], char *envp[])
   if (!lm)
     return 5;
 
+  void *f = find_sym("printf", lm);
 
+  if (!f)
+    return 6;
+
+  ((func) f)("Bonjour\n");
 
   return 0;
 }
