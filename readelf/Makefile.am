@@ -6,7 +6,7 @@ AM_CPPFLAGS = \
 	      -include $(top_builddir)/config.h \
 	      -I${top_srcdir}/src
 
-AM_CFLAGS = $(WARN_CFLAGS)# $(PTHREAD_FLAGS) $(OPENSSL_INCLUDES) $(CURL_FLAGS)
+AM_CFLAGS = -Wall -g -std=c99# $(PTHREAD_FLAGS) $(OPENSSL_INCLUDES) $(CURL_FLAGS)
 #AM_LDFLAGS = $(WARN_LDFLAGS)
 
 bin_PROGRAMS = simple-readelf

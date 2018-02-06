@@ -10,9 +10,10 @@ AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([
 		  foreign
 		  -Wall
-		  silent-rules
 		  subdir-objects
 ])
+
+CFLAGS=-g
 
 AC_PROG_CC_C99
 AC_PROG_CC_STDC
@@ -20,7 +21,7 @@ AC_USE_SYSTEM_EXTENSIONS
 
 AX_COMPILER_FLAGS
 
-AM_SILENT_RULES([yes])
+#AM_SILENT_RULES([yes])
 
 #AX_PTHREAD(
 #	   [PTHREAD_LIBS="-lpthread"],
