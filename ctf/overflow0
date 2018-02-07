@@ -1,3 +1,6 @@
 #!/bin/bash
 
-python2 -c 'print "A" * 65' | nc lse.epita.fr 52132
+HOST=$1
+PORT=$2
+
+python2 -c 'print "A" * 65' | nc "$HOST" "$PORT"
