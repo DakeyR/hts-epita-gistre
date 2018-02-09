@@ -34,6 +34,9 @@ static int handler_pre(struct kprobe *p, struct pt_regs *regs)
 {
   int len = strnlen_user((void *)regs->si, 255);
 
+  if (!(regs->dx & O_RDWR || regs->dx & O_WRONLY))
+    return 0;
+
   copy_from_user(pathname, (void *)regs->si, len);
   if (!strcmp(pathname, filename))
   {
