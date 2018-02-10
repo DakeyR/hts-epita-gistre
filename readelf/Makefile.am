@@ -34,10 +34,12 @@ simple_readelf_SOURCES = \
 
 #simple-readelf_LDADD = $(PTHREAD_LIBS) $(OPENSSL_LDFLAGS) $(OPENSSL_LIBS) $(CURL_LIBS)
 
-#TESTS = \
-#	tests/test-args \
-#	test-example
+TESTS = \
+				tests/simple.sh \
+				tests/ls.sh \
+				tests/cat.sh
 
-#check_PROGRAMS = test-example
+check_PROGRAMS = tests/example tests/printf-test
 
-#test_example_SOURCES = tests/test-example.c
+test_example_SOURCES = tests/example.c
+test_printf_test_SOURCES = tests/printf-test.c
