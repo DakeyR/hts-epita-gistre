@@ -4,7 +4,14 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include "xlat.h"
 #include "readelf.h"
+
+#include "e_type.h"
+#include "e_machine.h"
+#include "e_version.h"
+
+#include "sh_type.h"
 
 int is_elf(unsigned char *ident)
 {
@@ -14,21 +21,21 @@ int is_elf(unsigned char *ident)
 
 void dump_header(ElfW(Ehdr) *header)
 {
-//  printf("{");
-  dump_entry(header, e_type, "%d,");
-/*  dump_entry(header, e_machine, "%d,");
-  dump_entry(header, e_version, "%d,");
-  dump_entry(header, e_entry, "%d,");
-  dump_entry(header, e_phoff, "%d,");
-  dump_entry(header, e_shoff, "%d,");
-  dump_entry(header, e_flags, "%d,");
-  dump_entry(header, e_ehsize, "%d,");
-  dump_entry(header, e_phentsize, "%d,");
-  dump_entry(header, e_phnum, "%d,");
-  dump_entry(header, e_shentsize, "%d,");
-  dump_entry(header, e_shnum, "%d,");
-  dump_entry(header, e_shstrndx, "%d,");*/
-//  printf("}");
+  printf("{");
+  dump_macro(header, e_type, "\"%s\",");
+  dump_macro(header, e_machine, "\"%s\",");
+  dump_macro(header, e_version, "\"%s\",");
+  dump_entry(header, e_entry, "%lu,");
+  dump_entry(header, e_phoff, "%lu,");
+  dump_entry(header, e_shoff, "%lu,");
+  dump_entry(header, e_flags, "%lu,");
+  dump_entry(header, e_ehsize, "%lu,");
+  dump_entry(header, e_phentsize, "%lu,");
+  dump_entry(header, e_phnum, "%lu,");
+  dump_entry(header, e_shentsize, "%lu,");
+  dump_entry(header, e_shnum, "%lu,");
+  dump_entry(header, e_shstrndx, "%lu");
+  printf("}");
 }
 
 void *load_header(int fd, off_t size)
@@ -47,8 +54,6 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  printf("Binary path: %s\n", argv[1]);
-
   int fd = open(argv[1], O_RDONLY);
   if (fd == -1)
   {
@@ -62,7 +67,6 @@ int main(int argc, char *argv[])
 
   ElfW(Ehdr) *header = load_header(fd, buf.st_size);
 
-  printf("%s\n", header->e_ident);
   int ret = is_elf(header->e_ident);
   if (!ret)
     return 4;

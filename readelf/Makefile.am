@@ -4,7 +4,8 @@ AM_MAKEFLAGS = --no-print-directory
 
 AM_CPPFLAGS = \
 	      -include $(top_builddir)/config.h \
-	      -I${top_srcdir}/src
+	      -I${top_srcdir}/src \
+	      -I${top_srcdir}/src/xlat
 
 AM_CFLAGS = -Wall -g -std=c99# $(PTHREAD_FLAGS) $(OPENSSL_INCLUDES) $(CURL_FLAGS)
 #AM_LDFLAGS = $(WARN_LDFLAGS)
@@ -12,7 +13,8 @@ AM_CFLAGS = -Wall -g -std=c99# $(PTHREAD_FLAGS) $(OPENSSL_INCLUDES) $(CURL_FLAGS
 bin_PROGRAMS = simple-readelf
 
 simple_readelf_SOURCES = \
-		  src/readelf.c
+		  src/readelf.c \
+			src/xlat.c
 
 #simple-readelf_LDADD = $(PTHREAD_LIBS) $(OPENSSL_LDFLAGS) $(OPENSSL_LIBS) $(CURL_LIBS)
 
