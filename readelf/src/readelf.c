@@ -17,6 +17,10 @@
 
 #include "st_shndx.h"
 
+#include "bind.h"
+#include "type.h"
+#include "visibility.h"
+
 int is_elf(unsigned char *ident)
 {
   return ident[0] == 0x7f && ident[1] == 'E' && ident[2] == 'L'
@@ -135,7 +139,14 @@ void dump_symbols(ElfW(Shdr) *shead, ElfW(Ehdr) *header, char *strtab)
       dump_macro_dflt(tmp->st_shndx, st_shndx, "%u,");
     dump_entry(tmp, st_value, "%lu,");
     dump_entry(tmp, st_size, "%lu,");
-    printf("\"name\": \"%s\"", local_strtab + tmp->st_name);
+    printf("\"name\": \"%s\",", local_strtab + tmp->st_name);
+    printf("\"st_info\":{\n");
+    printf("\"bind\": \"%s\",", xlookup(bind, ELF32_ST_BIND(tmp->st_info)));
+    printf("\"type\": \"%s\"", xlookup(type, ELF32_ST_TYPE(tmp->st_info)));
+    printf("},");
+    printf("\"st_other\":{\n");
+    printf("\"visibility\": \"%s\"", xlookup(type, ELF32_ST_VISIBILITY(tmp->st_other)));
+    printf("}");
     printf("},\n");
   }
 
@@ -150,7 +161,14 @@ void dump_symbols(ElfW(Shdr) *shead, ElfW(Ehdr) *header, char *strtab)
     dump_macro_dflt(symtab->st_shndx, st_shndx, "%u,");
   dump_entry(symtab, st_value, "%lu,");
   dump_entry(symtab, st_size, "%lu,");
-  printf("\"name\": \"%s\"", local_strtab + symtab->st_name);
+  printf("\"name\": \"%s\",", local_strtab + symtab->st_name);
+  printf("\"st_info\":{\n");
+  printf("\"bind\": \"%s\",", xlookup(bind, ELF32_ST_BIND(symtab->st_info)));
+  printf("\"type\": \"%s\"", xlookup(type, ELF32_ST_TYPE(symtab->st_info)));
+  printf("},\n");
+  printf("\"st_other\":{\n");
+  printf("\"visibility\": \"%s\"", xlookup(type, ELF32_ST_VISIBILITY(symtab->st_other)));
+  printf("}");
   printf("}\n");
   printf("]}");
 }
