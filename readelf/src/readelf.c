@@ -21,21 +21,49 @@ int is_elf(unsigned char *ident)
 
 void dump_header(ElfW(Ehdr) *header)
 {
-  printf("{");
+  printf("\"header\":{");
   dump_macro(header, e_type, "\"%s\",");
   dump_macro(header, e_machine, "\"%s\",");
   dump_macro(header, e_version, "\"%s\",");
   dump_entry(header, e_entry, "%lu,");
   dump_entry(header, e_phoff, "%lu,");
   dump_entry(header, e_shoff, "%lu,");
-  dump_entry(header, e_flags, "%lu,");
-  dump_entry(header, e_ehsize, "%lu,");
-  dump_entry(header, e_phentsize, "%lu,");
-  dump_entry(header, e_phnum, "%lu,");
-  dump_entry(header, e_shentsize, "%lu,");
-  dump_entry(header, e_shnum, "%lu,");
-  dump_entry(header, e_shstrndx, "%lu");
-  printf("}");
+  dump_entry(header, e_flags, "%u,");
+  dump_entry(header, e_ehsize, "%d,");
+  dump_entry(header, e_phentsize, "%d,");
+  dump_entry(header, e_phnum, "%d,");
+  dump_entry(header, e_shentsize, "%d,");
+  dump_entry(header, e_shnum, "%u,");
+  dump_entry(header, e_shstrndx, "%d");
+  printf("}\n");
+}
+
+void dump_shdrs(ElfW(Shdr) *shdrs, unsigned int shnum)
+{
+  printf("\"sections\":[");
+  for (unsigned i = 0; i < shnum - 1; i++)
+  {
+    dump_section_header(shdrs + i);
+    printf(",");
+  }
+  dump_section_header(shdrs + (shnum - 1));
+  printf("]\n");
+}
+
+void dump_section_header(ElfW(Shdr) *shead)
+{
+  printf("{");
+  dump_entry(shead, sh_name, "%u,");
+  dump_macro(shead, sh_type, "\"%s\",");
+  dump_entry(shead, sh_flags, "%lu,");
+  dump_entry(shead, sh_addr, "%lu,");
+  dump_entry(shead, sh_offset, "%lu,");
+  dump_entry(shead, sh_size, "%lu,");
+  dump_entry(shead, sh_link, "%d,");
+  dump_entry(shead, sh_info, "%d,");
+  dump_entry(shead, sh_addralign, "%lu,");
+  dump_entry(shead, sh_entsize, "%lu");
+  printf("}\n");
 }
 
 void *load_header(int fd, off_t size)
@@ -71,7 +99,11 @@ int main(int argc, char *argv[])
   if (!ret)
     return 4;
 
+  printf("{\n");
   dump_header(header);
+  printf(",");
+  dump_shdrs((void *)((char *)header + header->e_shoff), header->e_shnum);
+  printf("}");
 
   munmap(header, buf.st_size);
   close(fd);
