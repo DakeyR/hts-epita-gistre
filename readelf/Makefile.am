@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 	      -I${top_srcdir}/src \
 	      -I${top_srcdir}/src/xlat
 
-AM_CFLAGS = -Wall -g -std=c99# $(PTHREAD_FLAGS) $(OPENSSL_INCLUDES) $(CURL_FLAGS)
+AM_CFLAGS = -Wall -g -std=c99 $(CODE_COVERAGE_CFLAGS) #$(OPENSSL_INCLUDES) $(CURL_FLAGS)
 #AM_LDFLAGS = $(WARN_LDFLAGS)
 
 EXTRA_DIST+=${top_srcdir}/src/xlat/gen.sh \
