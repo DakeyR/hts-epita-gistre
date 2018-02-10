@@ -38,19 +38,26 @@ void dump_header(ElfW(Ehdr) *header)
   printf("}\n");
 }
 
-void dump_shdrs(ElfW(Shdr) *shdrs, unsigned int shnum)
+void *get_strtab(ElfW(Ehdr) *header)
+{
+  ElfW(Shdr) *shdr =  (void *)((char *)header + header->e_shoff);
+  shdr = shdr + header->e_shstrndx;
+  return (char *)header + shdr->sh_offset;
+}
+
+void dump_shdrs(ElfW(Shdr) *shdrs, unsigned int shnum, char *strtab)
 {
   printf("\"sections\":[");
   for (unsigned i = 0; i < shnum - 1; i++)
   {
-    dump_section_header(shdrs + i);
+    dump_section_header(shdrs + i, strtab);
     printf(",");
   }
-  dump_section_header(shdrs + (shnum - 1));
+  dump_section_header(shdrs + (shnum - 1), strtab);
   printf("]\n");
 }
 
-void dump_section_header(ElfW(Shdr) *shead)
+void dump_section_header(ElfW(Shdr) *shead, char *strtab)
 {
   printf("{");
   dump_entry(shead, sh_name, "%u,");
@@ -62,7 +69,8 @@ void dump_section_header(ElfW(Shdr) *shead)
   dump_entry(shead, sh_link, "%d,");
   dump_entry(shead, sh_info, "%d,");
   dump_entry(shead, sh_addralign, "%lu,");
-  dump_entry(shead, sh_entsize, "%lu");
+  dump_entry(shead, sh_entsize, "%lu,");
+  printf("\"name\":\"%s\"", strtab + shead->sh_name);
   printf("}\n");
 }
 
@@ -99,10 +107,12 @@ int main(int argc, char *argv[])
   if (!ret)
     return 4;
 
+  char *strtab = get_strtab(header);
+
   printf("{\n");
   dump_header(header);
   printf(",");
-  dump_shdrs((void *)((char *)header + header->e_shoff), header->e_shnum);
+  dump_shdrs((void *)((char *)header + header->e_shoff), header->e_shnum, strtab);
   printf("}");
 
   munmap(header, buf.st_size);
