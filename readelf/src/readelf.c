@@ -114,6 +114,29 @@ void dump_program_header(ElfW(Phdr) *phead)
   printf("}\n");
 }
 
+static
+void dump_symbol(ElfW(Sym) *symtab, char *strtab)
+{
+  printf("{");
+  dump_entry(symtab, st_name, "%u,");
+  const char *str = xlookup(st_shndx, symtab->st_shndx);
+  if (str)
+    dump_macro_dflt(str, st_shndx, "\"%s\",");
+  else
+    dump_macro_dflt(symtab->st_shndx, st_shndx, "%u,");
+  dump_entry(symtab, st_value, "%lu,");
+  dump_entry(symtab, st_size, "%lu,");
+  printf("\"name\": \"%s\",", strtab + symtab->st_name);
+  printf("\"st_info\":{\n");
+  printf("\"bind\": \"%s\",", xlookup(bind, ELF32_ST_BIND(symtab->st_info)));
+  printf("\"type\": \"%s\"", xlookup(type, ELF32_ST_TYPE(symtab->st_info)));
+  printf("},\n");
+  printf("\"st_other\":{\n");
+  printf("\"visibility\": \"%s\"", xlookup(visibility, ELF32_ST_VISIBILITY(symtab->st_other)));
+  printf("}");
+  printf("}");
+}
+
 void dump_symbols(ElfW(Shdr) *shead, ElfW(Ehdr) *header, char *strtab)
 {
   ElfW(Shdr) *tmp = (void *)((char *)header + header->e_shoff);
@@ -130,46 +153,11 @@ void dump_symbols(ElfW(Shdr) *shead, ElfW(Ehdr) *header, char *strtab)
   for (ElfW(Xword) i = 0; i < size - 1; i++)
   {
     ElfW(Sym) *tmp = symtab + i;
-    printf("{");
-    dump_entry(tmp, st_name, "%u,");
-    const char *str = xlookup(st_shndx, tmp->st_shndx);
-    if (str)
-      dump_macro_dflt(str, st_shndx, "\"%s\",");
-    else
-      dump_macro_dflt(tmp->st_shndx, st_shndx, "%u,");
-    dump_entry(tmp, st_value, "%lu,");
-    dump_entry(tmp, st_size, "%lu,");
-    printf("\"name\": \"%s\",", local_strtab + tmp->st_name);
-    printf("\"st_info\":{\n");
-    printf("\"bind\": \"%s\",", xlookup(bind, ELF32_ST_BIND(tmp->st_info)));
-    printf("\"type\": \"%s\"", xlookup(type, ELF32_ST_TYPE(tmp->st_info)));
-    printf("},");
-    printf("\"st_other\":{\n");
-    printf("\"visibility\": \"%s\"", xlookup(type, ELF32_ST_VISIBILITY(tmp->st_other)));
-    printf("}");
-    printf("},\n");
+    dump_symbol(tmp, local_strtab);
+    printf(",");
   }
-
   symtab = symtab + (size - 1);
-
-  printf("{");
-  dump_entry(symtab, st_name, "%u,");
-  const char *str = xlookup(st_shndx, symtab->st_shndx);
-  if (str)
-    dump_macro_dflt(str, st_shndx, "\"%s\",");
-  else
-    dump_macro_dflt(symtab->st_shndx, st_shndx, "%u,");
-  dump_entry(symtab, st_value, "%lu,");
-  dump_entry(symtab, st_size, "%lu,");
-  printf("\"name\": \"%s\",", local_strtab + symtab->st_name);
-  printf("\"st_info\":{\n");
-  printf("\"bind\": \"%s\",", xlookup(bind, ELF32_ST_BIND(symtab->st_info)));
-  printf("\"type\": \"%s\"", xlookup(type, ELF32_ST_TYPE(symtab->st_info)));
-  printf("},\n");
-  printf("\"st_other\":{\n");
-  printf("\"visibility\": \"%s\"", xlookup(type, ELF32_ST_VISIBILITY(symtab->st_other)));
-  printf("}");
-  printf("}\n");
+  dump_symbol(symtab, local_strtab);
   printf("]}");
 }
 
