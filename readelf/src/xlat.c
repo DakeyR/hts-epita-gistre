@@ -41,35 +41,3 @@ xlookup(const struct xlat *xlat, const uint64_t val)
 			return xlat->str;
 	return NULL;
 }
-/**
- * Print entry in struct xlat table, if there.
- *
- * @param val  Value to search a literal representation for.
- * @param dflt String (abbreviated in comment syntax) which should be emitted
- *             if no appropriate xlat value has been found.
- * @param xlat (And the following arguments) Pointers to arrays of xlat values.
- *             The last argument should be NULL.
- * @return     1 if appropriate xlat value has been found, 0 otherwise.
- */
-int
-printxvals(const uint64_t val, const char *dflt, const struct xlat *xlat, ...)
-{
-	va_list args;
-
-	va_start(args, xlat);
-	for (; xlat; xlat = va_arg(args, const struct xlat *)) {
-		const char *str = xlookup(xlat, val);
-
-		if (str) {
-			printf("%s", str);
-			va_end(args);
-			return 1;
-		}
-	}
-	/* No hits -- print raw # instead. */
-	printf(dflt, val);
-
-	va_end(args);
-
-	return 0;
-}
