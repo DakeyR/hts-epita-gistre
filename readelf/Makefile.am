@@ -33,7 +33,7 @@ EXTRA_DIST+= \
 
 EXTRA_DIST+= ${BUILT_SOURCES:.h=.in}
 $(BUILT_SOURCES):
-	${top_srcdir}/xlat/gen.sh ${@:.h=.in} $@
+	${top_srcdir}/src/xlat/gen.sh ${@:.h=.in} $@
 
 bin_PROGRAMS = simple-readelf
 
@@ -48,7 +48,13 @@ TESTS = \
 				tests/simple.sh \
 				tests/simple2.sh \
 				tests/ls.sh \
-				tests/cat.sh
+				tests/cat.sh \
+				 tests/fail.sh \
+				 tests/fail2.sh
+
+XFAIL_TESTS = \
+				 tests/fail.sh \
+				 tests/fail2.sh
 
 check_PROGRAMS = tests/example tests/printf-test
 
