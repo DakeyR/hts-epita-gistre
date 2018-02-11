@@ -27,6 +27,9 @@ EXTRA_DIST+= \
 							${top_srcdir}/tests/printf-test.c \
 							${top_srcdir}/tests/simple.sh \
 							${top_srcdir}/tests/simple2.sh \
+							${top_srcdir}/tests/fail.sh \
+							${top_srcdir}/tests/fail2.sh \
+							${top_srcdir}/tests/fail3.sh \
 							${top_srcdir}/tests/ls.sh \
 							${top_srcdir}/tests/cat.sh \
 							${top_srcdir}/src/xlat/gen.sh
@@ -50,11 +53,13 @@ TESTS = \
 				tests/ls.sh \
 				tests/cat.sh \
 				 tests/fail.sh \
-				 tests/fail2.sh
+				 tests/fail2.sh \
+				 tests/fail3.sh
 
 XFAIL_TESTS = \
 				 tests/fail.sh \
-				 tests/fail2.sh
+				 tests/fail2.sh \
+				 tests/fail3.sh
 
 check_PROGRAMS = tests/example tests/printf-test
 
