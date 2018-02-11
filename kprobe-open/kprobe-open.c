@@ -14,7 +14,6 @@
 #include <linux/module.h>
 #include <linux/kprobes.h>
 #include <linux/uaccess.h>
-#include <asm/uaccess.h>
 
 #define MAX_SYMBOL_LEN	64
 static char symbol[MAX_SYMBOL_LEN] = "do_sys_open";
@@ -22,7 +21,7 @@ module_param_string(symbol, symbol, sizeof(symbol), 0644);
 
 /* For each probe you need to allocate a kprobe structure */
 static struct kprobe kp = {
-	.symbol_name	= symbol,
+	.symbol_name = symbol,
 };
 
 static char pathname[255];
@@ -32,27 +31,28 @@ module_param(filename, charp, 0644);
 /* kprobe pre_handler: called just before the probed instruction is executed */
 static int handler_pre(struct kprobe *p, struct pt_regs *regs)
 {
-  int len = strnlen_user((void *)regs->si, 255);
+	int len = strnlen_user((void *)regs->si, 255);
 
-  if (!(regs->dx & O_RDWR || regs->dx & O_WRONLY))
-    return 0;
+	if (!(regs->dx & O_RDWR || regs->dx & O_WRONLY))
+		return 0;
 
-  copy_from_user(pathname, (void *)regs->si, len);
-  if (!strcmp(pathname, filename))
-  {
-    pr_info("<%s> pre_handler: p->addr = 0x%p, ip = %lx, flags = 0x%lx\n",
-		  p->symbol_name, p->addr, regs->ip, regs->flags);
-    pr_info("<%s>: forbidden to open %s for writing\n", p->symbol_name, filename);
+	copy_from_user(pathname, (void *)regs->si, len);
+	if (!strcmp(pathname, filename)) {
+		pr_info
+		("<%s> pre_handler: p->addr = 0x%p, ip = %lx, flags = 0x%lx\n",
+			p->symbol_name, p->addr, regs->ip, regs->flags);
+		pr_info("<%s>: forbidden to open %s for writing\n",
+			p->symbol_name, filename);
 
-    regs->si = 0x42;
-  }
+		regs->si = 0x42;
+	}
 	/* A dump_stack() here will give a stack backtrace */
 	return 0;
 }
 
 /* kprobe post_handler: called after the probed instruction is executed */
 static void handler_post(struct kprobe *p, struct pt_regs *regs,
-				unsigned long flags)
+			 unsigned long flags)
 {
 }
 
